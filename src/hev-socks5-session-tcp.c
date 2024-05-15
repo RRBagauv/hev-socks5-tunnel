@@ -92,6 +92,7 @@ tcp_splice_b (HevSocks5SessionTCP *self)
             err |= tcp_write (self->pcb, iov[i].iov_base, iov[i].iov_len, 0);
             s += iov[i].iov_len;
         }
+        LOG_D ("tcp size: %d", s);
         hev_ring_buffer_read_finish (self->buffer, s);
         err |= tcp_output (self->pcb);
     }

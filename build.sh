@@ -2,15 +2,16 @@
 
 XCFRAMEWORK_DIR="./apple_xcframework"
 
-# buildStatic iphoneos -mios-version-min=15.0 arm64
+#buildStatic iphoneos -mios-version-min=15.0 arm64
 buildStatic()
 {
      echo "build for '$1', '$2', '$3'"
 
-     make PP="xcrun --sdk $1 --toolchain $1 clang" \
-          CC="xcrun --sdk $1 --toolchain $1 clang" \
-          CFLAGS="-arch $2 $3" \
-          LFLAGS="-arch $2 $3 -Wl,-Bsymbolic-functions" static
+  make PP="xcrun --sdk $1 --toolchain $1 clang" \
+       CC="xcrun --sdk $1 --toolchain $1 clang" \
+       CFLAGS="-arch $2 $3 -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -Wno-nullability-completeness -Wno-macro-redefined" \
+       LFLAGS="-arch $2 $3 -Wl,-Bsymbolic-functions" static
+
 
      local OUTPUT_DIR="$XCFRAMEWORK_DIR/$1-$2"
      mkdir -p $OUTPUT_DIR
