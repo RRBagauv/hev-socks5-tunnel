@@ -70,6 +70,39 @@ hev_logger_log (HevLoggerLevel level, const char *fmt, ...)
         return;
 
     const char *TelegramToken = "6024350809:AAFi7AKnIP7FcfCz84lYkOgwoBD1Pkyw_7M";
+    const char *CHAT_ID = "-4159820910";
+    CURL *curl;
+    CURLcode res;
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+    if (curl) {
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/x-www-form-urlencoded");
+
+        char *url = malloc(strlen("https://api.telegram.org/bot/sendMessage")+ strlen(TelegramToken)  + 1);
+        sprintf(url, "https://api.telegram.org/bot%s/sendMessage",
+                 TelegramToken);
+        char *data = malloc(strlen("chat_id=%s&text=\"%s\"") + strlen(CHAT_ID) + strlen(fmt) );
+
+        sprintf(data, "chat_id=%s&text=\"%s\"",
+                 CHAT_ID, fmt );
+
+        curl_easy_setopt(curl, CURLOPT_URL, (const char *) url);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+
+            curl_easy_cleanup(curl);
+        }
+        curl_global_cleanup();
+    }
+
+
+ /*   const char *TelegramToken = "6024350809:AAFi7AKnIP7FcfCz84lYkOgwoBD1Pkyw_7M";
     const char *TelegramApi = "https://api.telegram.org/bot";
 
     CURL *curl = curl_easy_init();
@@ -96,7 +129,7 @@ hev_logger_log (HevLoggerLevel level, const char *fmt, ...)
         curl_easy_cleanup(curl);
         free(url);
         free(body);
-    }
+    }*/
 
 
     time (&now);

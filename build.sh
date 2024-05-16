@@ -9,7 +9,7 @@ buildStatic()
 
   make PP="xcrun --sdk $1 --toolchain $1 clang" \
        CC="xcrun --sdk $1 --toolchain $1 clang" \
-       CFLAGS="-arch $2 $3 -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -Wno-nullability-completeness -Wno-macro-redefined" \
+       CFLAGS="-arch $2 $3 -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -Wno-nullability-completeness -Wno-macro-redefined " \
        LFLAGS="-arch $2 $3 -Wl,-Bsymbolic-functions" static
 
 
